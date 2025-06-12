@@ -5,7 +5,7 @@
     ],
     "defaultSeverity": "error",
     "rules": {
-        "no-console":{
+        "no-console": {
             "severity": "warning",
             "options": [
                 "log",
@@ -15,6 +15,7 @@
                 "info",
                 "debug"
             ]
-        }
+        },
+        "object-literal-sort-keys": false
     }
 }
