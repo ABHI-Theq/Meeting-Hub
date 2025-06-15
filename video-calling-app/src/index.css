@@ -1,4 +1,4 @@
 @import "Tailwindcss";
 @plugin "daisyui" {
-   themes: luxury --default;
+   themes: synthwave --default;
  }
