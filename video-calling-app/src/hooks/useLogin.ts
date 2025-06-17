@@ -35,14 +35,19 @@ const useLogin = () => {
       if (setToken) {
         setToken(response.data.token);
       }
+            toast.success("logged in successfully")
       localStorage.setItem("token", response.data.token);
       navigate("/home")
-      toast.success("signed in successfully")
       return;
-    } catch (error) {
-      toast.error((error instanceof Error)?error.message:String(error))
-    }finally{
-      setLoading(false)
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.error || "Signup failed";
+        toast.error(message);
+      } else {
+        toast.error(error.message || "Unknown error");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 

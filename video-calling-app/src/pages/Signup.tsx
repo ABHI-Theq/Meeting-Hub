@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link} from 'react-router-dom';
 import useSignup from '../hooks/useSignup';
+import toast from 'react-hot-toast';
 
 export default function Signup() {
   const [username, setUsername] = useState('');
@@ -9,22 +10,22 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
   const {loading,signup}=useSignup()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
+   
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      toast.error('Password must be at least 6 characters');
       return;
     }
+
+
 
       await signup({ user: { username, email, password } });
 
@@ -32,16 +33,16 @@ export default function Signup() {
 
   return (
     <div className=' h-[92vh] flex justify-center items-center'>
-      <div className='w-[28%] h-[60%] bg-base-200 rounded-4xl shadow-xl flex flex-col justify-center items-center'>
+      <div className='w-[400px] h-[60%] bg-base-200 rounded-4xl shadow-xl flex flex-col justify-center items-center'>
         <form
           className='w-full h-[80%] flex flex-col justify-around items-center gap-y-4'
           onSubmit={handleSubmit}
         >
-          <span className='text-3xl font-serif'>Signup here</span>
+          <span className='sm:text-md md:text-lg  lg:text-xl xl:text-3xl font-serif'>Signup here</span>
           <div className=' w-[76%] flex flex-col gap-y-4 justify-center items-center'>
 
             {/* Username */}
-            <label className="input w-full text-lg">
+            <label className="input w-full  md:text-sm lg:text-md xl:text-lg">
               <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                   <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
@@ -60,7 +61,7 @@ export default function Signup() {
             </label>
 
             {/* Email */}
-            <label className="input text-lg w-full">
+            <label className="input md:text-sm lg:text-md xl:text-lg w-full">
               <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                   <rect width="20" height="16" x="2" y="4" rx="2"></rect>
@@ -77,14 +78,13 @@ export default function Signup() {
             </label>
 
             {/* Password */}
-            <label className="input text-lg w-full relative">
+            <label className="input md:text-sm lg:text-md xl:text-lg w-full relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                 title="Must include number, lowercase, uppercase, 8+ chars"
               />
               <div className="absolute right-2 top-1 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
@@ -102,14 +102,13 @@ export default function Signup() {
             </label>
 
             {/* Confirm Password */}
-            <label className="input text-lg w-full relative">
+            <label className="input md:text-sm lg:text-md xl:text-lg w-full relative">
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm Password"
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                 title="Must include number, lowercase, uppercase, 8+ chars"
               />
               <div className="absolute right-2 top-1 cursor-pointer" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
@@ -126,11 +125,9 @@ export default function Signup() {
               </div>
             </label>
 
-            {/* Error */}
-            {error && <p className="text-red-500">{error}</p>}
-
+            
             {/* Redirect */}
-            <p className='text-lg w-full'>
+            <p className='md:text-sm lg:text-md xl:text-lg w-full'>
               Already have an account? <Link to="/login" className='underline font-bold'>Login here</Link>
             </p>
           </div>
@@ -139,7 +136,7 @@ export default function Signup() {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-xs bg-base-100 sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl rounded-2xl"
+            className="btn  bg-base-100 sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl rounded-2xl"
           >
             {loading ? (
               <span className="loading loading-dots loading-lg"></span>

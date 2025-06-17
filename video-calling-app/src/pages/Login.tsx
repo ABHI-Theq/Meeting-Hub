@@ -25,16 +25,16 @@ export default function Login() {
 
   return (
     <div className='h-[92vh] flex justify-center items-center'>
-      <div className='w-[28%] h-[40%] bg-base-200 rounded-4xl shadow-xl flex flex-col justify-center items-center'>
+      <div className='w-[28%] h-[50%] bg-base-200 rounded-4xl shadow-xl flex flex-col justify-center items-center'>
         <form
-          className='w-full h-[80%] flex flex-col justify-around items-center gap-y-4'
+          className='w-full h-[80%] flex flex-col justify-around items-center gap-y-6'
           onSubmit={handleSubmit}
         >
-          <span className='text-3xl font-serif'>Login here</span>
+          <span className='sm:text-md md:text-lg  lg:text-xl xl:text-3xl font-serif'>Login here</span>
           <div className='w-[76%] flex flex-col gap-y-4 justify-center items-center'>
 
            {/* Email */}
-            <label className="input text-lg w-full">
+            <label className="input md:text-sm lg:text-md xl:text-lg w-full">
               <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
                   <rect width="20" height="16" x="2" y="4" rx="2"></rect>
@@ -51,14 +51,13 @@ export default function Login() {
             </label>
 
             {/* Password */}
-            <label className="input text-lg w-full relative">
+            <label className="input md:text-sm lg:text-md xl:text-lg w-full relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                 title="Must include number, lowercase, uppercase, 8+ chars"
               />
               <div className="absolute right-2 top-1 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
@@ -81,7 +80,7 @@ export default function Login() {
 
             {/* Redirect */}
             <p className='text-lg w-full'>
-              don't have an account? <Link to="/login" className='underline font-bold'>Signup here</Link>
+              don't have an account? <Link to="/signup" className='underline font-bold'>Signup here</Link>
             </p>
           </div>
 

@@ -19,6 +19,17 @@ const createToken=(user: IUserObj): string =>{
     return token;
 }
 
+const verifyToken = (token: string): { valid: boolean; payload?: any; error?: string } => {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET as string);
+    console.log(decoded)
+    return { valid: true, payload: decoded };
+  } catch (err: any) {
+    return { valid: false, error: err.message };
+  }
+};
+
+
 export const SignUp=async(req: Request, res: Response): Promise<Response<any, Record<string, any>>> => {
     try {
         
@@ -57,8 +68,9 @@ export const SignUp=async(req: Request, res: Response): Promise<Response<any, Re
             
         });
 
+        const userWithoutPassword = await User.findById(user._id).select("-password");
         return res.status(201).json({
-            user,
+            user: userWithoutPassword,
             token,
             message:"User created Successfully"
         })
@@ -93,7 +105,7 @@ export const Login=async (req: Request,res:Response): Promise<Response<any, Reco
         }
 
         if(!isPasswordValid){
-            return res.status(400).json({error: "Invalid credentials"});
+            return res.status(400).json({error: "Password is incorrect"});
         }
 
         const token=createToken({id:user._id,username:user.username});
@@ -120,22 +132,52 @@ export const Login=async (req: Request,res:Response): Promise<Response<any, Reco
     }
 }
 
-export const Logout=async (req: Request,res:Response): Promise<Response<any, Record<string, any>>> => {
-    try {
-        res.clearCookie("token",{
-            httpOnly:true,
-            secure:true
-        });
-        return res.status(200).json({
-            message:"User logged out successfully"
-        })
-    } catch (error: unknown) {
-        let msg="unknown error occurred"
-        if(error instanceof mongoose.Error){
-            msg=error.message
-        }
-        return res.status(400).json({
-            error:msg
-        })
+export const Logout = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const token = req.cookies?.token;
+
+    if (!token) {
+      return res.status(400).json({ error: "No token found to logout." });
     }
-}
+
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true, // Set to true in production with HTTPS
+      sameSite: "strict", // helps with CSRF protection
+      path: "/" // clear cookie for entire site
+    });
+
+    return res.status(200).json({
+      message: "User logged out successfully"
+    });
+
+  } catch (error: unknown) {
+    let msg = "Unknown error occurred";
+    if (error instanceof mongoose.Error || error instanceof Error) {
+      msg = error.message;
+    }
+
+    return res.status(500).json({
+      error: msg
+    });
+  }
+};
+
+export const validate = async (req: Request, res: Response): Promise<Response> => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ error: "Token not provided" });
+  }
+
+  const { valid, payload, error } = verifyToken(token);
+
+  if (!valid) {
+    return res.status(401).json({ error: error || "Token is invalid or expired" });
+  }
+
+  return res.status(200).json({
+    message: "Token is valid",
+    user: payload.user, // since you signed as { user: { id, username } }
+  });
+};

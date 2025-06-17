@@ -17,20 +17,20 @@ export const AuthProvider: React.FC<{children: React.ReactNode}>=({children})=>{
     return storedToken ? storedToken : null;
   });
   
-  useEffect(()=>{
-    const fetchUser=()=>{
-      const token=localStorage.getItem('token')
-      if(token){
-        const response=axiosInstance.get("/getdetails",{
-          headers:{
-            "Content-Type":'application/json',
-            "Authorization":`Bearer ${token}`
-            }
-        })
+  // useEffect(()=>{
+  //   const fetchUser=()=>{
+  //     const token=localStorage.getItem('token')
+  //     if(token){
+  //       const response=axiosInstance.get("/getdetails",{
+  //         headers:{
+  //           "Content-Type":'application/json',
+  //           "Authorization":`Bearer ${token}`
+  //           }
+  //       })
         
-      }
-    }
-  },[user,token])
+  //     }
+  //   }
+  // },[user,token])
 
   return (
     <AuthContext.Provider value={{user,token,setUser,setToken}}>

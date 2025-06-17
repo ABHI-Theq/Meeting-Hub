@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom"
 
 const Header = () => {
+
+  
   return (
     <div className="bg-base-300  shadow-md shadow-base-500  px-4 py-2">
     <div className="flex justify-center items-center gap-x-10 ">

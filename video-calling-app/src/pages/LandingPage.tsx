@@ -7,6 +7,8 @@ const LandingPage: React.FC = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const Auth=useAuth()
+  const token=Auth?.token
+  const user =Auth?.user
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -52,7 +54,7 @@ const LandingPage: React.FC = () => {
           </p>
 
           <div className="space-y-6 md:space-y-0 md:space-x-6 md:flex md:justify-center">
-            {isSignedIn ? (
+            {(token) ? (
               <Link 
                 to="/home" 
                 className="btn btn-primary btn-lg group hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-synthwave-pink/50"
@@ -63,7 +65,7 @@ const LandingPage: React.FC = () => {
             ) : (
               <>
                 <Link 
-                  to="/signin" 
+                  to="/login" 
                   className="btn btn-primary btn-lg group hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-synthwave-pink/50"
                 >
                   Sign In
