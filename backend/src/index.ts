@@ -7,10 +7,16 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { DBConnect } from './DBConfig/DataBaseConnetion';
 import Authroute from "./routes/Authroute"
+import { protectedRoute } from './Middleware/ProtectRoute';
+import { Request, Response } from 'express';
 
 DBConnect()
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    credentials: true
+}
+));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
@@ -21,8 +27,19 @@ app.use('/api/auth',Authroute)
 const server=createServer(app);
 
 const userSocketMap: Map<string,string[]> = new Map<string, string[]>();
-// This map will hold the roomId as key and an array of socket IDs as value
+// This map will hold the roomId as key and an array of peerIds as value
 
+
+app.get("/api/room/:roomId", protectedRoute, async (req: Request, res: Response) : Promise<void>=> {
+    const roomId = req.params.roomId;
+    const peerIds = userSocketMap.get(roomId);
+    if (!peerIds) {
+         res.status(200).send({ error: "Room does not found" });
+         return;
+    }
+     res.status(200).send({ message: "exists" });
+     return;
+});
 
 const io=new Server(server,{
     cors:{

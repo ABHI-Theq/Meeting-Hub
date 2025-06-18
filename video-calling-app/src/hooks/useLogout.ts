@@ -21,8 +21,7 @@ const useLogout = () => {
       await axios.get("http://localhost:5500/api/auth/logout", {
         headers: {
           Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true, // if using httpOnly cookies too
+        }
       });
 
       localStorage.removeItem("token");

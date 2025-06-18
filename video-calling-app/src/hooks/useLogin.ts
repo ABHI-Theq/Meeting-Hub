@@ -41,7 +41,7 @@ const useLogin = () => {
       return;
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
-        const message = error.response?.data?.error || "Signup failed";
+        const message = error.response?.data?.error || "Login failed";
         toast.error(message);
       } else {
         toast.error(error.message || "Unknown error");

@@ -35,7 +35,7 @@ const Room = () => {
             // Reset state
             setStream(null);
             setParticipants([]);
-            navigate('/');
+            navigate('/home');
         }
     }
     // Get user media on mount and cleanup on unmount
@@ -154,7 +154,7 @@ const Room = () => {
 
     return (
         <div>
-            Room
+            
             <button
             className='cursor-pointer bg-red-500 text-white px-4 py-2 rounded'
              onClick={() => cutCall({ peerId: user?.id || '' })}>Leave Room</button>
@@ -167,7 +167,7 @@ const Room = () => {
                 }}
                  className='cursor-pointer bg-blue-500 text-white px-4 py-2 rounded'>
                     {
-                        isVideo? "Hide it": "Show it"
+                        isVideo? "Hide it": "Show it"   
                     } 
                     
                     </span>
@@ -194,6 +194,6 @@ const Room = () => {
             {peers && <OtherVIdeoFeed peers={peers as Record<string, MediaStream>} />}
         </div>
     )
-}
+}   
 
 export default Room

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useSignup from '../hooks/useSignup';
 import toast from 'react-hot-toast';
+import { User, Mail, Lock, Eye, EyeOff, Home } from 'lucide-react';
 
 export default function Signup() {
   const [username, setUsername] = useState('');
@@ -10,7 +11,7 @@ export default function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const {loading,signup}=useSignup()
+  const { loading, signup } = useSignup();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,30 +26,45 @@ export default function Signup() {
       return;
     }
 
-
-
-      await signup({ user: { username, email, password } });
-
+    await signup({ user: { username, email, password } });
   };
 
   return (
-    <div className=' h-[92vh] flex justify-center items-center'>
-      <div className='w-[400px] h-[60%] bg-base-200 rounded-4xl shadow-xl flex flex-col justify-center items-center'>
-        <form
-          className='w-full h-[80%] flex flex-col justify-around items-center gap-y-4'
-          onSubmit={handleSubmit}
-        >
-          <span className='sm:text-md md:text-lg  lg:text-xl xl:text-3xl font-serif'>Signup here</span>
-          <div className=' w-[76%] flex flex-col gap-y-4 justify-center items-center'>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 flex justify-center items-center p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+      <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-40 left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '4s' }}></div>
 
-            {/* Username */}
-            <label className="input w-full  md:text-sm lg:text-md xl:text-lg">
-              <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </g>
-              </svg>
+      {/* Home Button - Top Left */}
+      <Link 
+        to="/"
+        className="absolute top-6 left-6 z-10 group"
+      >
+        <div className="flex items-center space-x-2 backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl px-4 py-3 shadow-lg hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+          <Home className="w-5 h-5 text-white group-hover:text-purple-300 transition-colors duration-200" />
+          <span className="text-white font-medium group-hover:text-purple-300 transition-colors duration-200">Home</span>
+        </div>
+      </Link>
+
+      <div className="relative w-full max-w-md">
+        {/* Glassmorphism card */}
+        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-8 transform hover:scale-105 transition-all duration-500">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-4 shadow-lg">
+              <User className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
+            <p className="text-gray-300">Join us and start your journey</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Username Field */}
+            <div className="group relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <User className="h-5 w-5 text-gray-400 group-focus-within:text-purple-400 transition-colors duration-200" />
+              </div>
               <input
                 type="text"
                 required
@@ -57,28 +73,30 @@ export default function Signup() {
                 onChange={(e) => setUsername(e.target.value)}
                 pattern="[A-Za-z][A-Za-z0-9\-]*"
                 title="Only letters, numbers or dash"
+                className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-white/10"
               />
-            </label>
+            </div>
 
-            {/* Email */}
-            <label className="input md:text-sm lg:text-md xl:text-lg w-full">
-              <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
-                  <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                </g>
-              </svg>
+            {/* Email Field */}
+            <div className="group relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-purple-400 transition-colors duration-200" />
+              </div>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="mail@site.com"
                 required
+                className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-white/10"
               />
-            </label>
+            </div>
 
-            {/* Password */}
-            <label className="input md:text-sm lg:text-md xl:text-lg w-full relative">
+            {/* Password Field */}
+            <div className="group relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-purple-400 transition-colors duration-200" />
+              </div>
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
@@ -86,23 +104,22 @@ export default function Signup() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 title="Must include number, lowercase, uppercase, 8+ chars"
+                className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-white/10"
               />
-              <div className="absolute right-2 top-1 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a21.78 21.78 0 014.22-4.92M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l12.8 12.8" />
-                  </svg>
-                )}
-              </div>
-            </label>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-purple-400 transition-colors duration-200"
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+            </div>
 
-            {/* Confirm Password */}
-            <label className="input md:text-sm lg:text-md xl:text-lg w-full relative">
+            {/* Confirm Password Field */}
+            <div className="group relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-purple-400 transition-colors duration-200" />
+              </div>
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 required
@@ -110,39 +127,51 @@ export default function Signup() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm Password"
                 title="Must include number, lowercase, uppercase, 8+ chars"
+                className="w-full pl-12 pr-12 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 hover:bg-white/10"
               />
-              <div className="absolute right-2 top-1 cursor-pointer" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                {showConfirmPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a21.78 21.78 0 014.22-4.92M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l12.8 12.8" />
-                  </svg>
-                )}
-              </div>
-            </label>
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-purple-400 transition-colors duration-200"
+              >
+                {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+            </div>
 
-            
-            {/* Redirect */}
-            <p className='md:text-sm lg:text-md xl:text-lg w-full'>
-              Already have an account? <Link to="/login" className='underline font-bold'>Login here</Link>
-            </p>
-          </div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 px-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Creating Account...</span>
+                </div>
+              ) : (
+                'Create Account'
+              )}
+            </button>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn  bg-base-100 sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl rounded-2xl"
-          >
-            {loading ? (
-              <span className="loading loading-dots loading-lg"></span>
-            ) : 'Signup'}
-          </button>
-        </form>
+            {/* Login Link */}
+            <div className="text-center pt-4">
+              <p className="text-gray-300">
+                Already have an account?{' '}
+                <Link 
+                  to="/login" 
+                  className="text-purple-400 hover:text-purple-300 font-semibold underline underline-offset-2 hover:underline-offset-4 transition-all duration-200"
+                >
+                  Login here
+                </Link>
+              </p>
+            </div>
+          </form>
+        </div>
+
+        {/* Decorative elements */}
+        <div className="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-20 blur-xl"></div>
+        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full opacity-20 blur-xl"></div>
       </div>
     </div>
   );
