@@ -29,7 +29,7 @@ const LandingPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-gray-900 via-purple-900 to-black">
+    <div className="min-h-screen relative overflow-hidden bg-[#090040]">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Grid pattern */}
@@ -86,11 +86,11 @@ const LandingPage: React.FC = () => {
           {/* Main title */}
           <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 leading-tight">
             <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent animate-pulse-slow drop-shadow-2xl">
-              SynthWave
+              Meeting
             </span>
             <br />
             <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Meet
+              Hub
             </span>
           </h1>
           

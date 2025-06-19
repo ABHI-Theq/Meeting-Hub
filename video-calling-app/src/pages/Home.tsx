@@ -87,7 +87,7 @@ const Home = () => {
                             <button
                                 type="button"
                                 onClick={createRoom}
-                                className="group w-full bg-gradient-to-r from-success to-success-focus hover:from-success-focus hover:to-success text-success-content font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-success/25 flex items-center justify-center gap-3"
+                                className="group w-full bg-[#00d3bb] from-success to-success-focus hover:from-success-focus hover:to-success text-success-content font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-success/25 flex items-center justify-center gap-3"
                             >
                                 <Video className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" />
                                 <span className="text-lg">Create Meeting Room</span>
@@ -146,7 +146,7 @@ const Home = () => {
                                 <button
                                     type="submit"
                                     disabled={!roomId.trim()}
-                                    className="group w-full bg-gradient-to-r from-primary to-primary-focus hover:from-primary-focus hover:to-primary text-primary-content font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/25 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+                                    className="group w-full bg-[#f861b4] from-primary to-primary-focus hover:from-primary-focus hover:to-primary text-primary-content font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/25 flex items-center justify-center gap-3 disabled:opacity-80 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                                 >
                                     <Users className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
                                     <span className="text-lg">

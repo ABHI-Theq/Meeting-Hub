@@ -22,7 +22,7 @@ const createToken=(user: IUserObj): string =>{
 const verifyToken = (token: string): { valid: boolean; payload?: any; error?: string } => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET as string);
-    console.log(decoded)
+    // console.log(decoded)
     return { valid: true, payload: decoded };
   } catch (err: any) {
     return { valid: false, error: err.message };

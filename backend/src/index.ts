@@ -3,12 +3,12 @@ dotenv.config();
 import cookieParser from 'cookie-parser'
 import cors from 'cors';
 import express from 'express';
+import { Request, Response } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { DBConnect } from './DBConfig/DataBaseConnetion';
-import Authroute from "./routes/Authroute"
 import { protectedRoute } from './Middleware/ProtectRoute';
-import { Request, Response } from 'express';
+import Authroute from "./routes/Authroute"
 
 DBConnect()
 const app = express();
@@ -34,7 +34,7 @@ app.get("/api/room/:roomId", protectedRoute, async (req: Request, res: Response)
     const roomId = req.params.roomId;
     const peerIds = userSocketMap.get(roomId);
     if (!peerIds) {
-         res.status(200).send({ error: "Room does not found" });
+         res.status(200).send({ error: "Room does not exist" });
          return;
     }
      res.status(200).send({ message: "exists" });
