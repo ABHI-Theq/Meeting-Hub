@@ -13,13 +13,13 @@ const OtherVideoFeed = ({ peers }: Props) => {
     const totalSlides = Math.ceil(peerEntries.length / usersPerSlide);
 
     const nextSlide = () => {
-        if (showNavigation) {
+        if (totalSlides > 1) {
             setCurrentIndex((prev) => (prev + 1) % totalSlides);
         }
     };
 
     const prevSlide = () => {
-        if (showNavigation) {
+        if (totalSlides > 1) {
             setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
         }
     };
@@ -96,9 +96,7 @@ const OtherVideoFeed = ({ peers }: Props) => {
                                 <div className="absolute bottom-0 left-0 right-0 px-3 py-1 bg-black/40 backdrop-blur-sm text-white text-xs flex items-center justify-between">
                                     <span>{peerId || "Unknown"}</span>
                                     {!isAudioEnabled && (
-                                        <MicOff className="w-4 h-4 text-red-400 ml-2">
-                                            <title>Muted</title>
-                                        </MicOff>
+                                        <MicOff className="w-4 h-4 text-red-400 ml-2"/>
                                     )}
                                 </div>
                             </div>
@@ -138,7 +136,7 @@ const OtherVideoFeed = ({ peers }: Props) => {
 
                 <button
                     onClick={nextSlide}
-                    disabled={!showNavigation}
+                    disabled={totalSlides <= 1}
                     className={`p-3 rounded-full transition-all duration-200 backdrop-blur-sm border border-white/10 ${
                         totalSlides > 1 ? 'bg-white/10 hover:bg-white/20 cursor-pointer' : 'bg-white/5 opacity-50 cursor-not-allowed'
                     }`}
