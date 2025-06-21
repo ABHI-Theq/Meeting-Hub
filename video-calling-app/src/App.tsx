@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import AboutPage from './pages/AboutPage';
 import ProtectedRoute from './context/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
+import ContactPage from './pages/ContactPage';
 
 function App() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
+        <Route path="/contactus" element={<ProtectedRoute><ContactPage /></ProtectedRoute>} />
         <Route path="/room/:roomId" element={<ProtectedRoute><Room /></ProtectedRoute>} />
       </Routes>
     </>

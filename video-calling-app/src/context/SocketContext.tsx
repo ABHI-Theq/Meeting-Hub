@@ -22,7 +22,7 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
     useEffect(() => {
         if(!socket){
             const WS = io("http://localhost:5500", {
-                transports: ["websocket"]
+
             });
             setSocket(WS);
             WS.on("connect", () => {
@@ -30,9 +30,10 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
             });
             const userId= uuidv4(); // Generate a unique user ID
                const newPeer = new Peer(userId, {
-            host: "localhost",
-            port: 9000,
-            path: "/myapp"
+            host: "meeting-hub-peer-server.onrender.com",
+            path: "/peerjs/myapp",
+            secure: true,
+
         });
 
             setUser(newPeer);

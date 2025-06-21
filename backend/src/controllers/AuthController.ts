@@ -13,7 +13,7 @@ interface IUserObj{
 
 const createToken=(user: IUserObj): string =>{
     const token=jwt.sign({user},JWT_SECRET as string, {
-        expiresIn: '1h'}
+        expiresIn: '1d'}
     )
 
     return token;
@@ -63,7 +63,7 @@ export const SignUp=async(req: Request, res: Response): Promise<Response<any, Re
 
         res.cookie("token",token,{
             httpOnly:true,
-            maxAge:60*60,  // 1 hour
+            maxAge:24*60*60,  // 1 day
             secure:true
             
         });
@@ -113,7 +113,7 @@ export const Login=async (req: Request,res:Response): Promise<Response<any, Reco
         res.cookie("token",token,{
             httpOnly:true,
             secure:true,
-            maxAge:60*60  // 1 hour
+            maxAge:24*60*60  // 1 day
         });
 
         return res.status(200).json({

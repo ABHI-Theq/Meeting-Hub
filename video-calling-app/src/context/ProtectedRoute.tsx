@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom'
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const AuthContext = useAuth()
   const token = AuthContext?.token
+  const setToken = AuthContext?.setToken
+  const setUser = AuthContext?.setUser
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
 
@@ -26,10 +28,14 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
         if (response.status >= 400 || response.data.error) {
           throw new Error(response.data.error)
         }
-
         setLoading(false) // token is valid
 
       } catch (error) {
+        setToken?.('') // Update the token in context
+        setUser?.(null) // Clear user data in context
+        localStorage.removeItem("token") 
+        localStorage.removeItem("user") 
+
         toast.error("Token expired or invalid. Please log in again.");
         navigate("/login");
       }
