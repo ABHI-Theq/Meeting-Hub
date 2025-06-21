@@ -18,7 +18,7 @@ const useLogout = () => {
         return;
       }
 
-      await axios.get("http://localhost:5500/api/auth/logout", {
+      await axios.get("https://meeting-hub-backend.onrender.com/api/auth/logout", {
         headers: {
           Authorization: `Bearer ${token}`,
         }

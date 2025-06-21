@@ -14,7 +14,7 @@ export const useCheck = () => {
 
     try {
         setLoading(true)
-      const res = await axios.get(`http://localhost:5500/api/room/${roomId}`,
+      const res = await axios.get(`https://meeting-hub-backend.onrender.com/api/room/${roomId}`,
         {
             headers:{
                 "Authorization":`Bearer ${(localStorage.getItem("token"))}`

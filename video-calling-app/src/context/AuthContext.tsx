@@ -1,4 +1,4 @@
-import {useContext,createContext, useState, useEffect} from 'react'
+import {useContext,createContext, useState} from 'react'
 import type { AuthContextType, IUser } from '../types/Context'
 const AuthContext=createContext<AuthContextType | null>(null)
 

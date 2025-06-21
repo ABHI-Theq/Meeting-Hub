@@ -17,7 +17,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
       try {
         if (!token) throw new Error("No token provided");
 
-        const response = await axios.post("http://localhost:5500/api/auth/validate", {
+        const response = await axios.post("https://meeting-hub-backend.onrender.com/api/auth/validate", {
           token
         }, {
           headers: {

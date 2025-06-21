@@ -21,7 +21,7 @@ export const SocketProvider: React.FC<{children: React.ReactNode}> = ({children}
 
     useEffect(() => {
         if(!socket){
-            const WS = io("http://localhost:5500", {
+            const WS = io("https://meeting-hub-backend.onrender.com", {
 
             });
             setSocket(WS);

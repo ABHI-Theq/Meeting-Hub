@@ -15,7 +15,7 @@ const useLogin = () => {
     try {
       setLoading(true)
       const response = await axios.post(
-        "http://localhost:5500/api/auth/login",
+        "https://meeting-hub-backend.onrender.com/api/auth/login",
         { ...user },
         {
           headers: {

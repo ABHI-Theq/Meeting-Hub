@@ -8,7 +8,6 @@ const LandingPage: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
   const Auth = useAuth();
   const token = Auth?.token;
-  const user = Auth?.user;
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
