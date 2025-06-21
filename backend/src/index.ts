@@ -41,6 +41,10 @@ app.get("/api/room/:roomId", protectedRoute, async (req: Request, res: Response)
      return;
 });
 
+app.get("/",(req: Request, res: Response) : void => {
+    res.status(200).send("Welcome to the Video Calling App Backend")}
+)
+
 const io=new Server(server,{
     cors:{
         methods:["GET","POST"],

@@ -10,7 +10,6 @@
     "prestart": "npm run build",
     "start": "nodemon ./dist/index.js",
     "dev": "npx concurrently --kill-others \"npm run watch\" \"npm start\""
-
   },
   "author": "",
   "license": "ISC",
@@ -34,7 +33,7 @@
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.0.0",
     "bcryptjs": "^3.0.2",
-    "cookieparser": "^0.1.0",
+    "cookie-parser": "^1.4.7",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.1"
   }
