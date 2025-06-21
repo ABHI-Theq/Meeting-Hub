@@ -8,8 +8,9 @@
     "build": "tsc",
     "watch": "tsc -w",
     "prestart": "npm run build",
-    "start": "nodemon .",
+    "start": "nodemon ./dist/index.js",
     "dev": "npx concurrently --kill-others \"npm run watch\" \"npm start\""
+
   },
   "author": "",
   "license": "ISC",
