@@ -191,7 +191,7 @@ const Room = () => {
     }
 
     return (
-        <div className="h-[90vh] relative overflow-hidden">
+        <div className="h-screen relative overflow-hidden">
             {/* Header */}
             <div className="absolute top-0 left-0 right-0 z-10 p-6">
                 <div className="flex items-center justify-between">
@@ -230,7 +230,7 @@ const Room = () => {
             </div>
 
             {/* Main Content */}
-            <div className="h-[90vh] flex items-center justify-center p-6 pt-24">
+            <div className="h-screen flex items-center justify-center p-6 pt-24">
                 <div className="w-full max-w-7xl h-full flex gap-6">
                     {/* Local Video Feed */}
                     <div className="w-[50%] h-full glass-effect rounded-3xl p-6 flex flex-col">
