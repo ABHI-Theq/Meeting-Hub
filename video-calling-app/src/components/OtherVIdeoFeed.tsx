@@ -13,14 +13,17 @@ const OtherVideoFeed = (props: Props) => {
     const usersPerSlide = 2;
     const totalSlides = Math.ceil(peerEntries.length / usersPerSlide);
     
+    // Navigation should be enabled when there are more than 2 users (more than 1 slide)
+    const showNavigation = totalSlides > 1;
+    
     const nextSlide = () => {
-        if (totalSlides > 1) {
+        if (showNavigation) {
             setCurrentIndex((prev) => (prev + 1) % totalSlides);
         }
     };
     
     const prevSlide = () => {
-        if (totalSlides > 1) {
+        if (showNavigation) {
             setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
         }
     };
@@ -128,13 +131,13 @@ const OtherVideoFeed = (props: Props) => {
                 </div>
             </div>
             
-            {/* Navigation Controls - Always Visible */}
+            {/* Navigation Controls - Show based on showNavigation */}
             <div className="flex items-center justify-center gap-4 p-4">
                 <button
                     onClick={prevSlide}
-                    disabled={totalSlides <= 1}
+                    disabled={!showNavigation}
                     className={`p-3 rounded-full transition-all duration-200 backdrop-blur-sm border border-white/10 ${
-                        totalSlides > 1 
+                        showNavigation 
                             ? 'bg-white/10 hover:bg-white/20 cursor-pointer' 
                             : 'bg-white/5 opacity-50 cursor-not-allowed'
                     }`}
@@ -142,7 +145,7 @@ const OtherVideoFeed = (props: Props) => {
                     <ChevronLeft className="w-5 h-5 text-white" />
                 </button>
                 
-                {/* Slide Indicators - Always Show */}
+                {/* Slide Indicators */}
                 <div className="flex gap-2">
                     {totalSlides === 0 ? (
                         <div className="w-2 h-2 rounded-full bg-white/30" />
@@ -150,12 +153,12 @@ const OtherVideoFeed = (props: Props) => {
                         Array.from({ length: Math.max(1, totalSlides) }, (_, index) => (
                             <button
                                 key={index}
-                                onClick={() => totalSlides > 1 && setCurrentIndex(index)}
-                                disabled={totalSlides <= 1}
+                                onClick={() => showNavigation && setCurrentIndex(index)}
+                                disabled={!showNavigation}
                                 className={`w-2 h-2 rounded-full transition-all duration-200 ${
                                     index === currentIndex 
                                         ? 'bg-white' 
-                                        : totalSlides > 1 
+                                        : showNavigation 
                                             ? 'bg-white/30 hover:bg-white/50 cursor-pointer' 
                                             : 'bg-white/30 cursor-default'
                                 }`}
@@ -166,9 +169,9 @@ const OtherVideoFeed = (props: Props) => {
                 
                 <button
                     onClick={nextSlide}
-                    disabled={totalSlides <= 1}
+                    disabled={!showNavigation}
                     className={`p-3 rounded-full transition-all duration-200 backdrop-blur-sm border border-white/10 ${
-                        totalSlides > 1 
+                        showNavigation 
                             ? 'bg-white/10 hover:bg-white/20 cursor-pointer' 
                             : 'bg-white/5 opacity-50 cursor-not-allowed'
                     }`}
@@ -177,12 +180,12 @@ const OtherVideoFeed = (props: Props) => {
                 </button>
             </div>
             
-            {/* Participant count - Always visible */}
+            {/* Participant count */}
             <div className="text-center pb-2">
                 <span className="text-white/70 text-sm">
                     {peerEntries.length === 0 
                         ? '0 of 0 participants'
-                        : totalSlides > 1 
+                        : showNavigation 
                             ? `${currentIndex * usersPerSlide + 1}-${Math.min((currentIndex + 1) * usersPerSlide, peerEntries.length)} of ${peerEntries.length}`
                             : `${peerEntries.length} participant${peerEntries.length !== 1 ? 's' : ''}`
                     }
