@@ -6,6 +6,7 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 import ProtectedRoute from './context/ProtectedRoute';
 import LandingPage from './pages/LandingPage';
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
+        <Route path="/contactus" element={<ProtectedRoute><ContactPage /></ProtectedRoute>} />
         <Route path="/room/:roomId" element={<ProtectedRoute><Room /></ProtectedRoute>} />
       </Routes>
     </>
