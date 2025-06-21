@@ -53,12 +53,12 @@ const io=new Server(server,{
 })
 
 io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
+    // console.log('A user connected:', socket.id);
     
     // handle room creation
     socket.on('room-created', ({roomId, userId}) => {
         socket.join(roomId);
-        console.log('Room created:', roomId);
+        // console.log('Room created:', roomId);
 
         // Remove old userId if it exists in the room
         if (userSocketMap.has(roomId)) {
@@ -76,7 +76,7 @@ io.on('connection', (socket) => {
 
     socket.on('join-room', ({roomId, userId}) => {
         socket.join(roomId);
-        console.log('User joined room:', roomId);
+        // console.log('User joined room:', roomId);
 
         // Remove old userId if it exists in the room
         if (userSocketMap.has(roomId)) {
@@ -94,7 +94,7 @@ io.on('connection', (socket) => {
 
     socket.on('leave-room', ({roomId, userId}) => {
         socket.leave(roomId);
-        console.log('User left room:', roomId);
+        // console.log('User left room:', roomId);
         if(userSocketMap.has(roomId)) {
             const users = userSocketMap.get(roomId);
             if(users) {
@@ -103,7 +103,7 @@ io.on('connection', (socket) => {
         }
         if(userSocketMap.get(roomId)?.length === 0) {
             userSocketMap.delete(roomId);
-            console.log('Room deleted:', roomId);
+            // console.log('Room deleted:', roomId);
         }
         io.to(roomId).emit('user-left', { roomId, userId });
     });
