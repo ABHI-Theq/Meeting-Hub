@@ -1,4 +1,5 @@
 @import "Tailwindcss";
+
 @plugin "daisyui" {
    themes: synthwave --default;
  }

@@ -48,9 +48,12 @@ const Room = () => {
         if (socket && user && roomId) {
             socket.emit('leave-room', { roomId, userId: user.id });
             // Properly destroy the PeerJS connection
-            if (user && typeof user.destroy === 'function') {
-                user.destroy();
-            }
+            // if (user && typeof user.destroy === 'function') {
+            //     user.destroy();
+            // }
+            setParticipants(
+                (prevParticipants) => prevParticipants.filter(pid => pid !== user.id)
+            )
             // Stop all tracks in the stream
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
@@ -105,7 +108,7 @@ const Room = () => {
         if (videoRef.current && stream) {
             videoRef.current.srcObject = stream;
         }
-    }, [stream,isVideo]);
+    }, [stream,isVideo,participants]);
 
 
     // Join/create room logic
