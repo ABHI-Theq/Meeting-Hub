@@ -3,9 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import Peer from 'peerjs';
 import type { MediaConnection } from 'peerjs';
-import { Video, VideoOff, Mic, MicOff, PhoneOff, User, Copy, Users, Settings } from 'lucide-react';
-import { peerReducer } from '../Reducer/peerReducer';
+import { Video, VideoOff, Mic, MicOff, PhoneOff, User, Copy, Users, Settings, Monitor, MonitorOff, Grid3X3, Presentation } from 'lucide-react';
+import { peerReducer, screenShareReducer } from '../Reducer/peerReducer';
+import { addScreenShareAction, removeScreenShareAction } from '../Actions/peerAction';
 import OtherVIdeoFeed from '../components/OtherVIdeoFeed';
+import ScreenShareFeed from '../components/ScreenShareFeed';
+import useScreenShare from '../hooks/useScreenShare';
 
 const Room = () => {
     const { roomId } = useParams();
@@ -16,11 +19,19 @@ const Room = () => {
     const [stream, setStream] = useState<MediaStream | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const [peers, dispatch] = useReducer(peerReducer, {});
+    const [screenShares, screenDispatch] = useReducer(screenShareReducer, {});
     const [participants, setParticipants] = useState<string[]>([]);
     const [isVideo, setIsVideo] = useState<boolean>(true);
     const [isAudio, setIsAudio] = useState<boolean>(true);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [showCopied, setShowCopied] = useState<boolean>(false);
+    const [viewMode, setViewMode] = useState<'participants' | 'screen'>('participants');
+    
+    // Screen sharing hook
+    const { isSharing, screenStream, toggleScreenShare } = useScreenShare();
+    
+    // Track screen share calls separately
+    const screenShareCallsRef = useRef<Map<string, MediaConnection>>(new Map());
 
     // Toggle video track
     const toggleVideo = () => {
@@ -44,9 +55,49 @@ const Room = () => {
         }
     };
 
+    // Handle screen share toggle
+    const handleScreenShare = async () => {
+        const newScreenStream = await toggleScreenShare();
+        
+        if (newScreenStream && user) {
+            // Start sharing screen with all connected peers
+            participants
+                .filter(pid => pid !== user.id)
+                .forEach(peerId => {
+                    const call = user.call(`${peerId}-screen`, newScreenStream);
+                    screenShareCallsRef.current.set(peerId, call);
+                    
+                    call.on('stream', (remoteStream: MediaStream) => {
+                        // This shouldn't happen for outgoing screen share calls
+                        console.log('Received stream on outgoing screen share call');
+                    });
+                });
+            
+            // Switch to screen share view
+            setViewMode('screen');
+        } else if (!newScreenStream) {
+            // Stop all screen share calls
+            screenShareCallsRef.current.forEach(call => {
+                call.close();
+            });
+            screenShareCallsRef.current.clear();
+            
+            // Switch back to participants view if no screen shares are active
+            if (Object.keys(screenShares).length === 0) {
+                setViewMode('participants');
+            }
+        }
+    };
     const cutCall = () => {
         if (socket && user && roomId) {
             socket.emit('leave-room', { roomId, userId: user.id });
+            
+            // Close all screen share calls
+            screenShareCallsRef.current.forEach(call => {
+                call.close();
+            });
+            screenShareCallsRef.current.clear();
+            
             // Properly destroy the PeerJS connection
             if (user && typeof user.destroy === 'function') {
                 user.destroy();
@@ -54,6 +105,10 @@ const Room = () => {
             // Stop all tracks in the stream
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
+            }
+            // Stop screen share if active
+            if (screenStream) {
+                screenStream.getTracks().forEach(track => track.stop());
             }
             // Reset state
             setStream(null);
@@ -95,6 +150,10 @@ const Room = () => {
             // Also cleanup if stream is still in state
             if (stream) {
                 stream.getTracks().forEach(track => track.stop());
+            }
+            // Cleanup screen share
+            if (screenStream) {
+                screenStream.getTracks().forEach(track => track.stop());
             }
             setStream(null);
         };
@@ -161,15 +220,48 @@ const Room = () => {
         socket.on('user-left', (data: { roomId: string, userId: string }) => {
             setParticipants(prev => prev.filter(pid => pid !== data.userId));
             dispatch({ type: 'REMOVE_PEER', payload: { peerId: data.userId } });
+            screenDispatch({ type: 'REMOVE_SCREEN_SHARE', payload: { peerId: data.userId } });
+            
+            // Close screen share call if exists
+            const screenCall = screenShareCallsRef.current.get(data.userId);
+            if (screenCall) {
+                screenCall.close();
+                screenShareCallsRef.current.delete(data.userId);
+            }
         });
 
         // Answer incoming calls
         user.on('call', (call: MediaConnection) => {
-            if (stream) {
-                call.answer(stream);
+            const isScreenShare = call.peer.includes('-screen');
+            
+            if (isScreenShare) {
+                // Handle incoming screen share
+                call.answer(); // Don't send our stream for screen share calls
                 call.on('stream', (remoteStream: MediaStream) => {
-                    dispatch({ type: 'ADD_PEER', payload: { peerId: call.peer, stream: remoteStream } });
+                    const actualPeerId = call.peer.replace('-screen', '');
+                    screenDispatch(addScreenShareAction(actualPeerId, remoteStream));
+                    
+                    // Auto-switch to screen share view when someone starts sharing
+                    setViewMode('screen');
                 });
+                
+                call.on('close', () => {
+                    const actualPeerId = call.peer.replace('-screen', '');
+                    screenDispatch(removeScreenShareAction(actualPeerId));
+                    
+                    // Switch back to participants view if no screen shares are active
+                    if (Object.keys(screenShares).length <= 1 && !isSharing) {
+                        setViewMode('participants');
+                    }
+                });
+            } else {
+                // Handle regular video call
+                if (stream) {
+                    call.answer(stream);
+                    call.on('stream', (remoteStream: MediaStream) => {
+                        dispatch({ type: 'ADD_PEER', payload: { peerId: call.peer, stream: remoteStream } });
+                    });
+                }
             }
         });
 
@@ -177,7 +269,7 @@ const Room = () => {
             socket.off('joined-room', handleJoinedRoom);
             user.off('call');
         };
-    }, [socket, user, stream]);
+    }, [socket, user, stream, screenShares, isSharing]);
 
     if (isLoading) {
         return (
@@ -205,6 +297,35 @@ const Room = () => {
                         <div className="glass-effect rounded-2xl px-4 py-3 flex items-center gap-2">
                             <Users className="w-4 h-4 text-gray-300" />
                             <span className="text-white text-sm">{participants.length} participant{participants.length !== 1 ? 's' : ''}</span>
+                        </div>
+                        
+                        {/* View Mode Toggle */}
+                        <div className="glass-effect rounded-2xl p-1 flex">
+                            <button
+                                onClick={() => setViewMode('participants')}
+                                className={`px-4 py-2 rounded-xl transition-all duration-200 flex items-center gap-2 ${
+                                    viewMode === 'participants' 
+                                        ? 'bg-white/20 text-white' 
+                                        : 'text-gray-400 hover:text-white hover:bg-white/10'
+                                }`}
+                            >
+                                <Grid3X3 className="w-4 h-4" />
+                                <span className="text-sm">Participants</span>
+                            </button>
+                            <button
+                                onClick={() => setViewMode('screen')}
+                                className={`px-4 py-2 rounded-xl transition-all duration-200 flex items-center gap-2 ${
+                                    viewMode === 'screen' 
+                                        ? 'bg-white/20 text-white' 
+                                        : 'text-gray-400 hover:text-white hover:bg-white/10'
+                                }`}
+                            >
+                                <Presentation className="w-4 h-4" />
+                                <span className="text-sm">Screen Share</span>
+                                {(isSharing || Object.keys(screenShares).length > 0) && (
+                                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                )}
+                            </button>
                         </div>
                     </div>
                     
@@ -266,6 +387,12 @@ const Room = () => {
                                         <span className="text-white text-xs">Muted</span>
                                     </div>
                                 )}
+                                {isSharing && (
+                                    <div className="bg-blue-500 rounded-full px-3 py-1 flex items-center gap-1">
+                                        <Monitor className="w-3 h-3 text-white" />
+                                        <span className="text-white text-xs">Sharing Screen</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -304,6 +431,21 @@ const Room = () => {
                             </button>
 
                             <button
+                                className={`p-4 rounded-2xl transition-all duration-300 ${
+                                    isSharing 
+                                        ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                                        : 'bg-gray-700 hover:bg-gray-600 text-white'
+                                }`}
+                                onClick={handleScreenShare}
+                                title={isSharing ? 'Stop screen sharing' : 'Start screen sharing'}
+                            >
+                                {isSharing ? (
+                                    <MonitorOff className="w-6 h-6" />
+                                ) : (
+                                    <Monitor className="w-6 h-6" />
+                                )}
+                            </button>
+                            <button
                                 className="p-4 rounded-2xl bg-red-500 hover:bg-red-600 text-white transition-all duration-300"
                                 onClick={cutCall}
                                 title="Leave call"
@@ -313,27 +455,37 @@ const Room = () => {
                         </div>
                     </div>
 
-                    {/* Remote Video Feeds */}
+                    {/* Remote Content Area */}
                     <div className="flex-1 h-full glass-effect rounded-3xl p-6">
                         <div className="h-full flex flex-col">
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-white text-xl font-semibold">Participants</h3>
+                                <h3 className="text-white text-xl font-semibold">
+                                    {viewMode === 'participants' ? 'Participants' : 'Screen Share'}
+                                </h3>
                                 <div className="flex items-center gap-2">
                                     <Settings className="w-5 h-5 text-gray-400" />
                                 </div>
                             </div>
                             
                             <div className="flex-1 rounded-2xl bg-black/20 overflow-hidden">
-                                {Object.keys(peers).length > 0 ? (
-                                    <OtherVIdeoFeed peers={peers as Record<string, MediaStream>} />
-                                ) : (
-                                    <div className="h-full flex items-center justify-center">
-                                        <div className="text-center">
-                                            <Users className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                                            <p className="text-gray-400 text-lg mb-2">Waiting for others to join</p>
-                                            <p className="text-gray-500 text-sm">Share the room ID to invite participants</p>
+                                {viewMode === 'participants' ? (
+                                    Object.keys(peers).length > 0 ? (
+                                        <OtherVIdeoFeed peers={peers as Record<string, MediaStream>} />
+                                    ) : (
+                                        <div className="h-full flex items-center justify-center">
+                                            <div className="text-center">
+                                                <Users className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                                                <p className="text-gray-400 text-lg mb-2">Waiting for others to join</p>
+                                                <p className="text-gray-500 text-sm">Share the room ID to invite participants</p>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )
+                                ) : (
+                                    <ScreenShareFeed 
+                                        screenShares={screenShares as Record<string, MediaStream>}
+                                        localScreenShare={screenStream}
+                                        isLocalSharing={isSharing}
+                                    />
                                 )}
                             </div>
                         </div>
